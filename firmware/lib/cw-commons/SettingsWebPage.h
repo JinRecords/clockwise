@@ -78,7 +78,7 @@ const char SETTINGS_PAGE[] PROGMEM = R""""(
           property: "swapBlueGreen"
         },
         {
-          title: "Timezone",
+          title: "Timezone (This is a test)",
           description: "Consult your TZ identifier <a href='https://en.wikipedia.org/wiki/List_of_tz_database_time_zones'>here.</a> Examples: America/Sao_Paulo, Europe/Lisbon",
           formInput: "<input id='tz' class='w3-input w3-light-grey' name='tz' type='text' placeholder='Timezone' value='" + settings.timezone + "'>",
           icon: "fa-globe",
