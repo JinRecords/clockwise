@@ -1,9 +1,29 @@
 #include "CWWeatherService.h"
 
 WeatherData CWWeatherService::getCurrentWeather() {
-  if (millis() - lastUpdate > UPDATE_INTERVAL) {
+  // If startup is not complete and we haven't exhausted retries, attempt startup fetch
+  if (!startupComplete && startupRetryCount < MAX_STARTUP_RETRIES) {
+    if (millis() - lastRetryTime >= RETRY_INTERVAL) {
+      Serial.printf("Weather startup attempt %d/%d\n", startupRetryCount + 1, MAX_STARTUP_RETRIES);
+      if (attemptWeatherFetch()) {
+        startupComplete = true;
+        Serial.println("Weather startup successful");
+      } else {
+        startupRetryCount++;
+        if (startupRetryCount >= MAX_STARTUP_RETRIES) {
+          Serial.println("Weather startup failed after all retries");
+          startupComplete = true; // Mark as complete to stop retrying
+        }
+      }
+      lastRetryTime = millis();
+    }
+  }
+  
+  // Regular update interval check (only after startup is complete)
+  if (startupComplete && millis() - lastUpdate > UPDATE_INTERVAL) {
     updateWeather();
   }
+  
   return currentWeather;
 }
 
@@ -13,6 +33,12 @@ void CWWeatherService::setConnecting() {
 }
 
 void CWWeatherService::updateWeather() {
+  if (attemptWeatherFetch()) {
+    lastUpdate = millis();
+  }
+}
+
+bool CWWeatherService::attemptWeatherFetch() {
   String apiKey = ClockwiseParams::getInstance()->weatherApiKey;
   String cityId = ClockwiseParams::getInstance()->weatherCityId;
   
@@ -20,7 +46,7 @@ void CWWeatherService::updateWeather() {
     Serial.println("Weather API key or city ID not configured");
     currentWeather.isValid = false;
     currentWeather.status = WEATHER_ERROR;
-    return;
+    return false;
   }
   
   Serial.println("Updating weather data...");
@@ -30,16 +56,17 @@ void CWWeatherService::updateWeather() {
     if (parseWeatherResponse(response, currentWeather)) {
       currentWeather.status = WEATHER_OK;
       Serial.printf("Weather updated: %s, %d°C\n", currentWeather.condition.c_str(), currentWeather.temperature);
+      return true;
     } else {
       currentWeather.status = WEATHER_ERROR;
       Serial.println("Failed to parse weather data");
+      return false;
     }
   } else {
     currentWeather.status = WEATHER_ERROR;
     Serial.println("Failed to get weather data");
+    return false;
   }
-  
-  lastUpdate = millis();
 }
 
 String CWWeatherService::makeWeatherRequest() {

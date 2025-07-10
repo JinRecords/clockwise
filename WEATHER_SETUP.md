@@ -1,93 +1,77 @@
-# Weather Setup Guide
+# Weather Setup for Clockwise
 
-This guide explains how to set up weather functionality for the Clockwise clockface.
+This document explains how to set up weather functionality in your Clockwise device.
 
-## Prerequisites
+## Overview
 
-1. **OpenWeather API Key**: You need to get a free API key from [OpenWeatherMap](https://openweathermap.org/api)
-2. **City ID**: You need to find your city's ID from OpenWeatherMap
+The weather feature displays current weather conditions next to the WiFi icon on the clockface. It fetches data from OpenWeather API and shows weather conditions like "sunny", "cloudy", "rain", etc.
 
-## Setup Steps
+## Setup Instructions
 
 ### 1. Get OpenWeather API Key
 
-1. Go to [OpenWeatherMap](https://openweathermap.org/api)
+1. Go to [OpenWeather](https://openweathermap.org/)
 2. Sign up for a free account
 3. Navigate to "My API Keys" section
 4. Copy your API key
 
 ### 2. Find Your City ID
 
-1. Go to [OpenWeatherMap City List](https://bulk.openweathermap.org/sample/)
-2. Download the city list or search for your city
-3. Find your city's ID (it's a number)
+1. Go to [OpenWeather City List](https://bulk.openweathermap.org/sample/)
+2. Download the city list file
+3. Search for your city and note the `id` field
+4. Alternatively, use the [OpenWeather City Finder](https://openweathermap.org/find)
 
-Alternatively, you can use this URL to find your city ID:
-```
-https://api.openweathermap.org/data/2.5/weather?q=YOUR_CITY_NAME&appid=YOUR_API_KEY
-```
+### 3. Configure in Clockwise
 
-### 3. Configure Weather Settings
+1. Connect to your Clockwise device's WiFi access point
+2. Open the web interface (usually at 192.168.4.1)
+3. Find the "Weather" card in the settings
+4. Enter your OpenWeather API key
+5. Enter your city ID
+6. Save the settings
 
-1. Access the Clockwise settings webpage
-2. Navigate to the "Weather" card
-3. Enter your OpenWeather API key
-4. Enter your city ID
-5. Save the settings
+## Features
 
-## Weather Conditions
+- **Weather Conditions**: Displays current weather (clear, cloudy, rain, thunder, snow, fog, etc.)
+- **Status Indicators**: Shows "..." when connecting, "error" when API is unreachable
+- **Scrolling Text**: Long weather descriptions scroll horizontally for better readability
+- **Startup Retry Logic**: Attempts to fetch weather data 5 times at startup with 10-second intervals if the initial fetch fails
+- **Automatic Updates**: Refreshes weather data every 5 minutes
+- **Error Handling**: Graceful handling of network issues and API errors
 
-The system displays the following weather conditions:
+## Weather Icons
 
-- **clear**: Sunny/clear sky
-- **cloudy**: Cloudy conditions
-- **partly**: Partly cloudy
-- **overcast**: Overcast conditions
-- **rain**: Rain
-- **drizzle**: Light rain/drizzle
-- **thunder**: Thunderstorm
-- **snow**: Snow
-- **fog**: Fog/mist
-
-## Display
-
-The weather information is displayed:
-- **Icon**: 8x8 pixel weather icon next to the WiFi icon
-- **Text**: Weather condition name with automatic scrolling for longer text
-
-### Display States
-
-- **Normal**: Shows current weather condition with appropriate icon
-- **Connecting**: Shows "..." with cloudy icon while fetching data
-- **Error**: Shows "error" with cloudy icon when API fails
-
-### Text Scrolling
-
-- Text longer than 5 characters automatically scrolls horizontally
-- Scrolls at 300ms intervals for readability
-- Includes pauses at the beginning and end of the text
-
-## Update Frequency
-
-Weather data is updated every 5 minutes to avoid hitting API rate limits.
+The system includes weather icons for different conditions:
+- ☀️ Clear/Sunny
+- ☁️ Cloudy/Partly Cloudy/Overcast
+- 🌧️ Rain/Drizzle
+- ⚡ Thunder
+- ❄️ Snow
+- 🌫️ Fog
 
 ## Troubleshooting
 
-### Weather not showing
-1. Check that your API key is correct
-2. Verify your city ID is valid
-3. Ensure you have an internet connection
-4. Check the serial monitor for error messages
+### "error" Display
+- Check your API key is correct
+- Verify your city ID is valid
+- Ensure internet connectivity
+- The system will retry automatically at startup
 
-### API Errors
-- **401**: Invalid API key
-- **404**: City not found
-- **429**: Rate limit exceeded (free tier allows 60 calls/minute)
+### No Weather Display
+- Verify both API key and city ID are configured
+- Check WiFi connection
+- Restart the device if issues persist
 
-## API Limits
+### Weather Not Updating
+- Weather updates every 5 minutes
+- Check internet connectivity
+- Verify API key has sufficient quota
 
-The free OpenWeather API has the following limits:
-- 60 calls per minute
-- 1,000,000 calls per month
+## Technical Details
 
-With 5-minute update intervals, you'll use approximately 288 calls per day, well within the free tier limits. 
+- **API Endpoint**: OpenWeather Current Weather API
+- **Update Interval**: 5 minutes
+- **Startup Retries**: 5 attempts with 10-second intervals
+- **Display**: 8x8 pixel icons with scrolling text
+- **Cache**: Weather data is cached between updates 

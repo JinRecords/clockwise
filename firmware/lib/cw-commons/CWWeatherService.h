@@ -39,6 +39,14 @@ private:
   unsigned long lastUpdate = 0;
   const unsigned long UPDATE_INTERVAL = 300000; // 5 minutes
   
+  // Retry logic for startup
+  bool startupComplete = false;
+  int startupRetryCount = 0;
+  const int MAX_STARTUP_RETRIES = 5;
+  unsigned long lastRetryTime = 0;
+  const unsigned long RETRY_INTERVAL = 10000; // 10 seconds between retries
+  
   String makeWeatherRequest();
   bool parseWeatherResponse(const String& response, WeatherData& weather);
+  bool attemptWeatherFetch();
 }; 
