@@ -4,7 +4,7 @@
 	shallow = true
 [submodule "firmware/clockfaces/cw-cf-0x02"]
 	path = firmware/clockfaces/cw-cf-0x02
-	url = https://github.com/JinRecords/cw-cf-0x02
+	url = https://github.com/JinRecords/cw-cf-0x02.git
 	shallow = true
 [submodule "firmware/clockfaces/cw-cf-0x03"]
 	path = firmware/clockfaces/cw-cf-0x03
