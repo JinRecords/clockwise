@@ -25,6 +25,8 @@ struct ClockwiseParams
     const char* const PREF_CANVAS_SERVER = "canvasServer";
     const char* const PREF_MANUAL_POSIX = "manualPosix";
     const char* const PREF_DISPLAY_ROTATION = "displayRotation";
+    const char* const PREF_WEATHER_API_KEY = "weatherApiKey";
+    const char* const PREF_WEATHER_CITY_ID = "weatherCityId";
 
     bool swapBlueGreen;
     bool use24hFormat;
@@ -40,6 +42,8 @@ struct ClockwiseParams
     String canvasServer;
     String manualPosix;
     uint8_t displayRotation;
+    String weatherApiKey;
+    String weatherCityId;
 
 
     ClockwiseParams() {
@@ -69,6 +73,8 @@ struct ClockwiseParams
         preferences.putString(PREF_CANVAS_SERVER, canvasServer);
         preferences.putString(PREF_MANUAL_POSIX, manualPosix);
         preferences.putUInt(PREF_DISPLAY_ROTATION, displayRotation);
+        preferences.putString(PREF_WEATHER_API_KEY, weatherApiKey);
+        preferences.putString(PREF_WEATHER_CITY_ID, weatherCityId);
     }
 
     void load()
@@ -87,6 +93,8 @@ struct ClockwiseParams
         canvasServer = preferences.getString(PREF_CANVAS_SERVER, "raw.githubusercontent.com");
         manualPosix = preferences.getString(PREF_MANUAL_POSIX, "");
         displayRotation = preferences.getUInt(PREF_DISPLAY_ROTATION, 0);
+        weatherApiKey = preferences.getString(PREF_WEATHER_API_KEY, "");
+        weatherCityId = preferences.getString(PREF_WEATHER_CITY_ID, "");
     }
 
 };

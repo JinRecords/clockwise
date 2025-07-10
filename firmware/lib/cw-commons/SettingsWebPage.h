@@ -143,6 +143,15 @@ const char SETTINGS_PAGE[] PROGMEM = R""""(
           icon: "fa-rotate-right",
           save: "updatePreference('displayRotation', rotation.value)",
           property: "displayRotation"
+        },
+        {
+          title: "Weather",
+          description: "Configure the OpenWeather API key as well as your city id.",
+          formInput: "<input id='weatherApiKey' class='w3-input w3-light-grey w3-cell w3-margin-right' name='weatherApiKey' style='width:45%;' type='text' placeholder='API Key' value='" + settings.weatherapikey + "'>" + 
+                     "<input id='weatherCityId' class='w3-input w3-light-grey w3-cell' name='weatherCityId' style='width:45%;' type='text' placeholder='City ID' value='" + settings.weathercityid + "'>",
+          icon: "fa-cloud",
+          save: "updatePreference('weatherApiKey', weatherApiKey.value); updatePreference('weatherCityId', weatherCityId.value)",
+          property: "weather"
         }
       ];
 
