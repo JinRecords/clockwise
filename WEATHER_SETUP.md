@@ -53,7 +53,19 @@ The system displays the following weather conditions:
 
 The weather information is displayed:
 - **Icon**: 8x8 pixel weather icon next to the WiFi icon
-- **Text**: Weather condition name (truncated to 6 characters)
+- **Text**: Weather condition name with automatic scrolling for longer text
+
+### Display States
+
+- **Normal**: Shows current weather condition with appropriate icon
+- **Connecting**: Shows "..." with cloudy icon while fetching data
+- **Error**: Shows "error" with cloudy icon when API fails
+
+### Text Scrolling
+
+- Text longer than 5 characters automatically scrolls horizontally
+- Scrolls at 300ms intervals for readability
+- Includes pauses at the beginning and end of the text
 
 ## Update Frequency
 

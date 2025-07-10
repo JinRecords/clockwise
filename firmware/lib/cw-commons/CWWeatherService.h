@@ -5,14 +5,21 @@
 #include <ArduinoJson.h>
 #include "CWPreferences.h"
 
+enum WeatherStatus {
+  WEATHER_OK,
+  WEATHER_CONNECTING,
+  WEATHER_ERROR
+};
+
 struct WeatherData {
   String condition;
   String description;
   int temperature;
   int humidity;
   bool isValid;
+  WeatherStatus status;
   
-  WeatherData() : temperature(0), humidity(0), isValid(false) {}
+  WeatherData() : temperature(0), humidity(0), isValid(false), status(WEATHER_ERROR) {}
 };
 
 struct CWWeatherService {
@@ -24,6 +31,7 @@ struct CWWeatherService {
   WeatherData getCurrentWeather();
   void updateWeather();
   String getWeatherCondition(const String& weatherId);
+  void setConnecting();
   
 private:
   WiFiClientSecure client;

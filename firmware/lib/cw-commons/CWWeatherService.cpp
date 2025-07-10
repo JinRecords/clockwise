@@ -7,6 +7,11 @@ WeatherData CWWeatherService::getCurrentWeather() {
   return currentWeather;
 }
 
+void CWWeatherService::setConnecting() {
+  currentWeather.status = WEATHER_CONNECTING;
+  currentWeather.isValid = false;
+}
+
 void CWWeatherService::updateWeather() {
   String apiKey = ClockwiseParams::getInstance()->weatherApiKey;
   String cityId = ClockwiseParams::getInstance()->weatherCityId;
@@ -14,16 +19,23 @@ void CWWeatherService::updateWeather() {
   if (apiKey.isEmpty() || cityId.isEmpty()) {
     Serial.println("Weather API key or city ID not configured");
     currentWeather.isValid = false;
+    currentWeather.status = WEATHER_ERROR;
     return;
   }
   
   Serial.println("Updating weather data...");
+  
   String response = makeWeatherRequest();
   if (!response.isEmpty()) {
     if (parseWeatherResponse(response, currentWeather)) {
+      currentWeather.status = WEATHER_OK;
       Serial.printf("Weather updated: %s, %d°C\n", currentWeather.condition.c_str(), currentWeather.temperature);
+    } else {
+      currentWeather.status = WEATHER_ERROR;
+      Serial.println("Failed to parse weather data");
     }
   } else {
+    currentWeather.status = WEATHER_ERROR;
     Serial.println("Failed to get weather data");
   }
   
@@ -41,8 +53,12 @@ String CWWeatherService::makeWeatherRequest() {
   client.setInsecure();
   client.setTimeout(10000);
   
+  // Set connecting state
+  currentWeather.status = WEATHER_CONNECTING;
+  
   if (!client.connect("api.openweathermap.org", 443)) {
     Serial.println("Failed to connect to OpenWeather API");
+    currentWeather.status = WEATHER_ERROR;
     return "";
   }
   
@@ -59,6 +75,7 @@ String CWWeatherService::makeWeatherRequest() {
     if (millis() - timeout > 5000) {
       Serial.println("Weather API request timeout");
       client.stop();
+      currentWeather.status = WEATHER_ERROR;
       return "";
     }
   }
@@ -75,6 +92,7 @@ String CWWeatherService::makeWeatherRequest() {
   int jsonStart = response.indexOf('{');
   if (jsonStart == -1) {
     Serial.println("No JSON found in weather response");
+    currentWeather.status = WEATHER_ERROR;
     return "";
   }
   
@@ -88,6 +106,13 @@ bool CWWeatherService::parseWeatherResponse(const String& response, WeatherData&
   if (error) {
     Serial.print("Weather JSON parsing failed: ");
     Serial.println(error.c_str());
+    weather.isValid = false;
+    return false;
+  }
+  
+  // Check for API errors
+  if (doc.containsKey("cod") && doc["cod"] != 200) {
+    Serial.printf("Weather API error: %d - %s\n", doc["cod"].as<int>(), doc["message"].as<const char*>());
     weather.isValid = false;
     return false;
   }
