@@ -4,6 +4,7 @@ project(cw-gfx-engine)
 
 idf_component_register(
                        INCLUDE_DIRS "."
-                       SRC_DIRS "." ColorUtil.h
+                       SRC_DIRS "."
+                       PUBLIC_HEADERS "ColorUtil.h"
                        REQUIRES arduino Adafruit-GFX-Library
                        )
